@@ -1,0 +1,13 @@
+REFLEXÃO FINAL - PROJETO SPRING BOOT + RABBITMQ
+
+1. Quais partes do sistema funcionaram exatamente como você esperava?
+
+O Docker subiu o RabbitMQ sem problemas na primeira tentativa. A configuração do Spring Boot com AMQP funcionou direto, as filas foram criadas automaticamente e a serialização JSON das mensagens funcionou perfeitamente. O fluxo Publisher -> Queue -> Consumer aconteceu instantaneamente, exatamente como planejado. O endpoint REST respondeu corretamente e os logs mostraram todo o rastreamento das mensagens.
+
+2. Quais dificuldades ou erros você enfrentou que precisou corrigir?
+
+O maior problema foi a incompatibilidade de versões. Tinha só Java 8 instalado mas Spring Boot 3.x precisa de Java 17+. Tive que fazer downgrade para Spring Boot 2.3.12 e instalar Java 11 manualmente. Os records não funcionaram no Java 8, então converti tudo para classes POJO normais. O Gradle Wrapper estava incompleto, faltava o JAR, tive que baixar manualmente. Também descobri que tinha só JRE instalado, não JDK completo, o que impedia a compilação.
+
+3. Se algo não funcionou, descreva o que falhou e como você diagnosticou.
+
+A compilação inicial falhou com "Could not find tools.jar". Rodei java -version e /usr/libexec/java_home -V e vi que só tinha JRE do browser plugin. Os logs do Gradle mostravam conflitos entre Java 8 e Java 17. Alguns processos foram mortos por falta de memória, então usei --no-daemon e executei o JAR diretamente. No final tudo funcionou perfeitamente - RabbitMQ rodando, aplicação conectada, mensagens sendo publicadas e consumidas em tempo real.
